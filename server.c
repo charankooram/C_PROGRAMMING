@@ -1,92 +1,112 @@
 #include <stdio.h>
-#include <unistd.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 
-/*
-* Encapsulates the properties of the server.
-*/
-typedef struct server {
-	// file descriptor of the socket in passive 
-	// mode to wait for connections.
-	int listen_fd;
-} server_t;
+#define MAX 80
+#define PORT 8080
+#define SA struct sockaddr
 
-/*
-* Creates a socket for the server and makes it passive
-* such that we can wait for connections on it later.
-*/
-int server_listen(server_t* server);
-/*
-* Accepts new connections and then prints `Hello World` to them
-*/
-int server_accept(server_t* server);
+void transactions(int connfd)
+{
+    char buff[MAX];
+    int n;
+    // infinite loop for chat
+    for (;;)
+    {
+        bzero(buff, MAX);
 
-#define PORT 8123
+        // read the message from client and copy it in buffer
+        read(connfd, buff, sizeof(buff));
+        // print buffer which contains client message
+        printf("from client: %s\t to client: ", buff);
+        bzero(buff, MAX);
+        n = 0;
+        // copy server message in buffer
+        while ((buff[n++] = getchar()) != '\n')
+            ;
+        // and send that buffer to client
+        write(connfd, buff, sizeof(buff));
 
-/*
-* Main server routine.
-* - instantiate a new server structure that holds the properties
-* of our server;
-* - creates socket and makes it passive with `server listen`;
-* - accepts new connections on the server socket.
-*/
-int main(){
-	printf("started server program\n");
-	int err = 0;
-	server_t server = { 0 };
-	printf("before server listen\n");
-	err = server_listen(&server);
-	//printf("after server listen");
-	if(err) {
-		printf("Failed to listen on address 0.0.0.0:%d\n", PORT);
-		return err;
-	}
-	for(;;){
-		//printf("before server accepting");
-		err = server_accept(&server);
-		//printf("after server accepting");
-		if(err){
-			printf("Failed accepting connection\n");
-			return err;
-		}
-	}
+        // if msg contains exit then server exits
+        if (strncmp("exit", buff, 4) == 0)
+        {
+            printf("server exit\n");
+            break;
+        }
 
-	return 0;
+    }
 }
 
-int server_listen(server_t* server){
-	int err = (server->listen_fd = socket(AF_INET, SOCK_STREAM,0));
-	//pause();
-	if (err == -1) {
-		perror("socket");
-		printf("Failed to create socket endpoint\n");
-		return err;
-	}
-	//struct sockaddr_in server_addr = { 0 };
-	//server_addr.sin_family = AF_INET;
-	//server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	//server_addr.sin_port = htons(PORT);
+// driver function
+int main()
+{
+    int sockfd, connfd, len;
+    struct sockaddr_in servaddr, cli;
 
-	//printf("%s\n", server_addr.sin_addr.s_addr);
-	//printf("%s\n", server_addr.sin_port);
+    printf("hello world!\n");
 
-	//err = bind(server->listen_fd, (struct sockaddr*)&server_addr, sizeof(server_addr));
-	//if (err == -1) {
-	//	perror("bind");
-	//	printf("Failed to bind socket to address\n");
-	//	return err;
-	//}
-	//printf(err);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    //printf("%s", sockfd);
+
+    // socket create and verification
+    if (sockfd == -1)
+    {
+        printf("socket  creation failed\n");
+        exit(0);
+    }
+    else
+        printf("socket successfully created\n");
+    bzero(&servaddr, sizeof(servaddr));
+    printf("servaddr %s\n", servaddr);
+    
+    // assign IP, PORT
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port = htons(PORT);
+
+    // printf("%s, %s, %s", servaddr.sin_family, servaddr.sin_addr.s_addr, servaddr.sin_port);
+   
+    // Bind newly created socket to given IP and verification
+    if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0 )
+    {
+        printf("socket bind failed\n");
+        exit(0);
+    }
+    else
+        printf("socket successfully bound\n");
+
+    // Now server is ready to listen and verify
+    if ( (listen(sockfd, 5)) != 0) 
+    {
+        printf("listen failed\n");
+        exit(0);
+    }
+    else
+        printf("server listening\n");
+    len = sizeof(cli);
+
+    // accept the data packet from client and verify
+    connfd = accept(sockfd, (SA*)&cli, &len);
+    if ( connfd < 0 )
+    {
+        printf("server accept failed\n");
+        exit(0);
+    }
+    else
+        printf("server accept the client");
+    
+    // function for chatting between client and server
+    transactions(connfd);
+
+    // after chatting close the socket
+    close(sockfd);
+
 }
-
-int server_accept(server_t* server){
-	int err = (server->listen_fd = socket(AF_INET, SOCK_STREAM,0));
-	if (err == -1){
-		perror("socket");
-		printf("Failed to create socket endpoint\n");
-		return err;
-	}
-}
-
 
 
