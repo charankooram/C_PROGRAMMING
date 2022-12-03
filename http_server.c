@@ -38,7 +38,7 @@ void transactions(int connfd)
 
                 // and send that buffer to client
         printf("response size: %d\n", sizeof(login_page));
-        printf("sending reponse as %s \n", login_page);
+        printf("sending response as %s \n", login_page);
         write(connfd, login_page, sizeof(login_page));
         printf("\n\nsent response.. listening again!\n\n");
 
@@ -82,7 +82,7 @@ int main()
     // printf("%s, %s, %s", servaddr.sin_family, servaddr.sin_addr.s_addr, servaddr.sin_port);
    
     // Bind newly created socket to given IP and verification
-    if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0 )
+    if ((bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr))) != 0 )
     {
         printf("socket bind failed\n");
         exit(0);
@@ -101,7 +101,7 @@ int main()
     len = sizeof(cli);
 
     // accept the data packet from client and verify
-    connfd = accept(sockfd, (SA*)&cli, &len);
+    connfd = accept(sockfd, (struct sockaddr *) &cli, &len);
     if ( connfd < 0 )
     {
         printf("server accept failed\n");

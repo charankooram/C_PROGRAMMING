@@ -68,7 +68,8 @@
 			[
 				0,
 				1,
-				2
+				2,
+				3
 			]
 		}
 	],
@@ -103,7 +104,8 @@
 			[
 				0,
 				1,
-				2
+				2,
+				3
 			]
 		}
 	],
@@ -125,6 +127,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "server_macOS_test.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "file_reader.c",
 			"sourceGroupIndex" : 0
 		}
 	],
