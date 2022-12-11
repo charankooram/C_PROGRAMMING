@@ -8,4 +8,4 @@ include_directories(.)
 add_executable(C_PROGRAMMING
         client.c
         server.c
-        server_macOS_test.c file_reader.c)
+        server_macOS_test.c file_reader.h DynamicMemoryAllocationTest.h utility.h)

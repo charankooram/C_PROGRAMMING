@@ -7,43 +7,128 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include "DynamicMemoryAllocationTest.h"
+#include "utility.h"
 
 #define MAX 800
 #define PORT 8080
 #define SA struct sockaddr
+#include "file_reader.h"
+#define BLOB 500
+
+
 
 void transactions(int connfd)
 {
-    char buff[MAX];
+    char client_message[MAX];
     int n;
     // infinite loop for chat
     for (;;)
     {
-        bzero(buff, MAX);
+        bzero(client_message, MAX);
 
         // read the message from client and copy it in buffer
-        read(connfd, buff, sizeof(buff));
+        read(connfd, client_message, sizeof(client_message));
         // print buffer which contains client message
-        printf("from client: %s\n", buff);
-        //bzero(buff, MAX);
-        //n = 0;
-        // copy server message in buffer
-        //while ((buff[n++] = getchar()) != '\n')
-        //    ;
-        //char index_page[] = "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Length: 48\nContent-Type: text/html\n\n<html><body><h1>Hello, World!</h1><form action=\"\" method=\"post\"><div class=\"imgcontainer\"><img src=\"img_avatar2.png\" alt=\"Avatar\" class=\"avatar\"></div><div class=\"container\"><label for=\"uname\"><b>Username</b></label><input type=\"text\" placeholder=\"Enter Username\" name=\"uname\" required><label for=\"psw\"><b>Password</b></label><input type=\"password\" placeholder=\"Enter Password\" name=\"psw\" required><button type=\"submit\">Login</button><label><input type=\"checkbox\" checked=\"checked\" name=\"remember\"> Remember me</label></div><div class=\"container\" style=\"background-color:#f1f1f1\"><button type=\"button\" class=\"cancelbtn\">Cancel</button><span class=\"psw\">Forgot <a href=\"#\">password?</a></span></div</form></body></html>";
-        char login_page[] = "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Length: 1319\nContent-Type: text/html\n\n<html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title> Login Page </title><style>Body {font-family: Calibri, Helvetica, sans-serif;background-color: pink;}button {background-color: #4CAF50;width: 100%;color: orange;padding: 15px;margin: 10px 0px;border: none;cursor: pointer;}form {border: 3px solid #f1f1f1;}input[type=text], input[type=password] {width: 100%;margin: 8px 0;padding: 12px 20px;display: inline-block;border: 2px solid green;box-sizing: border-box;}button:hover {opacity: 0.7;}.cancelbtn {width: auto;padding: 10px 18px;margin: 10px 5px;}.container {padding: 25px;background-color: lightblue;}</style></head><body><center> <h1> Student Login Form </h1> </center><form><div class=\"container\"><label>Username : </label><input type=\"text\" placeholder=\"Enter Username\" name=\"username\" required><label>Password : </label><input type=\"password\" placeholder=\"Enter Password\" name=\"password\" required><button type=\"submit\">Login</button><input type=\"checkbox\" checked=\"checked\"> Remember me<button type=\"button\" class=\"cancelbtn\"> Cancel</button>Forgot <a href=\"#\"> password? </a></div></form></body></html>";
+        printf("from client: %s\n", client_message);
+        int blob_factor = 1;
+        FILE *fp = fopen("hello.html", "r");
 
-        //"<html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title> Login Page </title><style>Body {font-family: Calibri, Helvetica, sans-serif;background-color: pink;}button {background-color: #4CAF50;width: 100%;color: orange;padding: 15px;margin: 10px 0px;border: none;cursor: pointer;}form {border: 3px solid #f1f1f1;}input[type=text], input[type=password] {width: 100%;margin: 8px 0;padding: 12px 20px;display: inline-block;border: 2px solid green;box-sizing: border-box;}button:hover {opacity: 0.7;}.cancelbtn {width: auto;padding: 10px 18px;margin: 10px 5px;}.container {padding: 25px;background-color: lightblue;}</style></head><body><center> <h1> Student Login Form </h1> </center><form><div class=\"container\"><label>Username : </label><input type=\"text\" placeholder=\"Enter Username\" name=\"username\" required><label>Password : </label><input type=\"password\" placeholder=\"Enter Password\" name=\"password\" required><button type=\"submit\">Login</button><input type=\"checkbox\" checked=\"checked\"> Remember me<button type=\"button\" class=\"cancelbtn\"> Cancel</button>Forgot <a href=\"#\"> password? </a></div></form></body></html>"
-        //"<form action=\"\" method=\"post\"><div class=\"imgcontainer\"><img src=\"img_avatar2.png\" alt=\"Avatar\" class=\"avatar\"></div><div class=\"container\"><label for=\"uname\"><b>Username</b></label><input type=\"text\" placeholder=\"Enter Username\" name=\"uname\" required><label for=\"psw\"><b>Password</b></label><input type=\"password\" placeholder=\"Enter Password\" name=\"psw\" required><button type=\"submit\">Login</button><label><input type=\"checkbox\" checked=\"checked\" name=\"remember\"> Remember me</label></div><div class=\"container\" style=\"background-color:#f1f1f1\"><button type=\"button\" class=\"cancelbtn\">Cancel</button><span class=\"psw\">Forgot <a href=\"#\">password?</a></span></div</form>"
+        char *buffer, *login_response;
+        buffer = malloc(blob_factor*BLOB*sizeof(char));
+        struct file_contents login_file_contents = get_from(fp, buffer, 1, BLOB);
+        
+        login_response = malloc(blob_factor*BLOB*sizeof(char));
+        printf("initialized login_page with %d units.\n", BLOB*blob_factor);
 
-                // and send that buffer to client
-        printf("response size: %d\n", sizeof(login_page));
-        printf("sending response as %s \n", login_page);
-        write(connfd, login_page, sizeof(login_page));
+
+        //char http_header[] = "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Length: 98\nContent-Type: text/html\n\n\n";
+        char* http_headers[] = {
+                "HTTP/1.1",
+                "200 OK",
+                "Date:",
+                "Mon, 27 Jul 2009 12:28:53 GMT",
+                "Server:",
+                "Apache/2.2.14 (Win32)",
+                "Last-Modified:",
+                "Wed, 22 Jul 2009 19:15:56 GMT",
+                "Content-Length:",
+                "98",
+                "Content-Type:",
+                "text/html"
+        };
+        // update content type with no. of chars from html file
+        http_headers[9] = convert_to_string(login_file_contents.size);
+        int http_header_size = 0;
+        int http_header_offset = 0;
+
+        // copy headers to login_response
+        // something is wrong here !
+        for(int i=0;i<12;i++)
+        {
+            int local_word_pointer=0;
+            while(http_headers[i][local_word_pointer]!='\0')
+            {
+                login_response[http_header_offset++] = http_headers[i][local_word_pointer++];
+            }
+            if (i/10 ==0)
+            {
+                login_response[http_header_offset++] = ' ';
+            }
+            else
+            {
+                login_response[http_header_offset++] = '\n';
+            }
+        }
+
+        // add two additional new line characters
+        login_response[http_header_offset++] = '\n';
+        login_response[http_header_offset++] = '\n';
+        printf("copied http headers to login_response. size %d offset %d\n", http_header_size, http_header_offset);
+
+
+        for (int i=0; i<login_file_contents.size; i++)
+        {
+            printf("%c", login_file_contents.buffer[i]);
+            if (http_header_offset < blob_factor*BLOB)
+            {
+                login_response[http_header_offset++] = login_file_contents.buffer[i];
+            }
+            else
+            {
+                login_response = realloc(login_response, ++blob_factor*BLOB*sizeof(char));
+                printf("resizing buffer to %d units.\n", blob_factor*BLOB);
+                login_response[http_header_offset++] = login_file_contents.buffer[i];
+            }
+        }
+        printf("\ncopied login file contents to login response %d\n", http_header_offset);
+
+        // printing response to console for confirmation.
+        int login_response_pointer = 0;
+        while (login_response_pointer < http_header_offset)
+        {
+            printf("%c", login_response[login_response_pointer++]);
+        }
+        printf("\n");
+
+        //char answer[] = "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Length: 98\nContent-Type: text/html\n\n\n<html>\n<head>\n<title>C-Style Services</title>\n</head>\n<body>\n<p1>HELLO WORLD!</p1>\n</body>\n</html>";
+
+        // and send that buffer to client
+        int status = write(connfd,login_response, http_header_offset);
+        printf("server write back status %d\n", status);
+
+        free(login_file_contents.buffer); // what about buffer ? Should it be freed too ?
+        login_file_contents.size = 0;
+        printf("freeing login_file_contents\n");
+        free(login_response);
+        printf("freeing login_response\n");
+        fclose(fp);
+        printf("Closing hello.html page\n");
+
         printf("\n\nsent response.. listening again!\n\n");
 
         // if msg contains exit then server exits
-        if (strncmp("exit", buff, 4) == 0)
+        if (strncmp("exit", client_message, 4) == 0)
         {
             printf("server exit\n");
             break;

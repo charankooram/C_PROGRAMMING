@@ -70,8 +70,8 @@ build CMakeFiles/C_PROGRAMMING.dir/server_macOS_test.c.o: C_COMPILER__C_PROGRAMM
   OBJECT_DIR = CMakeFiles/C_PROGRAMMING.dir
   OBJECT_FILE_DIR = CMakeFiles/C_PROGRAMMING.dir
 
-build CMakeFiles/C_PROGRAMMING.dir/file_reader.c.o: C_COMPILER__C_PROGRAMMING_Debug /home/charan/playground/C_PROGRAMMING/file_reader.c || cmake_object_order_depends_target_C_PROGRAMMING
-  DEP_FILE = CMakeFiles/C_PROGRAMMING.dir/file_reader.c.o.d
+build CMakeFiles/C_PROGRAMMING.dir/utility.c.o: C_COMPILER__C_PROGRAMMING_Debug /home/charan/playground/C_PROGRAMMING/utility.c || cmake_object_order_depends_target_C_PROGRAMMING
+  DEP_FILE = CMakeFiles/C_PROGRAMMING.dir/utility.c.o.d
   FLAGS = -g -std=gnu11
   INCLUDES = -I/home/charan/playground/C_PROGRAMMING/.
   OBJECT_DIR = CMakeFiles/C_PROGRAMMING.dir
@@ -85,7 +85,7 @@ build CMakeFiles/C_PROGRAMMING.dir/file_reader.c.o: C_COMPILER__C_PROGRAMMING_De
 #############################################
 # Link the executable C_PROGRAMMING
 
-build C_PROGRAMMING: C_EXECUTABLE_LINKER__C_PROGRAMMING_Debug CMakeFiles/C_PROGRAMMING.dir/client.c.o CMakeFiles/C_PROGRAMMING.dir/server.c.o CMakeFiles/C_PROGRAMMING.dir/server_macOS_test.c.o CMakeFiles/C_PROGRAMMING.dir/file_reader.c.o
+build C_PROGRAMMING: C_EXECUTABLE_LINKER__C_PROGRAMMING_Debug CMakeFiles/C_PROGRAMMING.dir/client.c.o CMakeFiles/C_PROGRAMMING.dir/server.c.o CMakeFiles/C_PROGRAMMING.dir/server_macOS_test.c.o CMakeFiles/C_PROGRAMMING.dir/utility.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/C_PROGRAMMING.dir
   POST_BUILD = :

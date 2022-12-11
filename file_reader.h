@@ -19,7 +19,68 @@
               void*: "void*", \
               default: "?"))
 
+struct file_contents
+{
+    char* buffer;
+    int size;
+};
 
+/*
+ *  parameters:
+ *  fp: pointer to the source file
+ *  buffer: memory pointer to the character array that will be filled with the file contents
+ *  blob_factor: 1 keeping track of blob size to adjust buffer capacity dynamically
+ *  blob: 500 default capacity of buffer
+ *
+ *  returns the number of characters read from the file contents after storing the contents
+ *  to the memory location provided.
+ * */
+struct file_contents get_from(FILE* fp, char* buffer,  int blob_factor, int blob)
+{
+    //char * temp_buffer;
+    //temp_buffer = malloc(500*sizeof(char));
+    printf("inside file_reader/get_from\n");
+    //temporary variable to store characters fetched from the file stream
+    char ch;
+    // array index in destination buffer
+    int offset = 0;
+    do
+    {
+        ch = fgetc(fp);
+        //printf("%s\t", type_name(ch));
+        //printf("read: %c\t", ch);
+        buffer[offset] = ch;
+        //printf("content: %c\n", buffer[offset]);
+        // dynamic adjustment of buffer
+        if (offset + 1 == blob*blob_factor)
+        {
+            printf("resizing buffer to %d units.\n", (blob_factor+1)*blob);
+            buffer = realloc(buffer, ++blob_factor*blob*sizeof(char));
+            printf("size of buffer : %d blob_factor %d\n", sizeof(buffer), blob_factor);
+        }
+        offset = offset + 1;
+    } while (ch != EOF);
+    printf("\n%d\n", offset);
+    // to count the number of characters read
+    int c_offset = 0;
+    while (c_offset < offset)
+    {
+        printf("%c", buffer[c_offset]);
+        c_offset = c_offset + 1;
+    }
+    printf("\n");
+    printf("%s\n", buffer == &buffer[0] ? "true" : "false");
+    printf("exiting file_reader/get_from\n");
+
+    struct file_contents fc;
+    fc.buffer = buffer;
+    fc.size = offset;
+
+
+    return fc;
+}
+
+/*
 int main()
 {
     char input_path[] = "login_page.html";
@@ -70,4 +131,5 @@ int main()
     printf("freeing buffer: %d\n", sizeof(buffer));
     return 0;
 }
+*/
 
