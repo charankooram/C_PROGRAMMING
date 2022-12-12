@@ -71,7 +71,7 @@ void transactions(int connfd)
             {
                 login_response[http_header_offset++] = http_headers[i][local_word_pointer++];
             }
-            if (i/10 ==0)
+            if (i%2 == 0)
             {
                 login_response[http_header_offset++] = ' ';
             }
