@@ -77,6 +77,79 @@ int get_number_of_characters_from_header_array(char **arr, int size)
     return sum;
 }
 
+void test_string_equality(char* one)
+{
+    int one_pointer=0;
+    while (one[one_pointer]!='\0')
+    {
+        char current_character=one[one_pointer];
+        switch(one_pointer)
+        {
+            case 0:
+                printf("%s\n", current_character == 'H' ? "true" : "false");
+                break;
+            case 1:
+                printf("%s\n", current_character == 'o' ? "true" : "false");
+                break;
+            case 2:
+                printf("%s\n", current_character == 's' ? "true" : "false");
+                break;
+            case 3:
+                printf("%s\n", current_character == 't' ? "true" : "false");
+                break;
+            case 4:
+                printf("%s\n", current_character == ':' ? "true" : "false");
+                break;
+            case 5:
+                printf("%s\n", current_character == ' ' ? "true" : "false");
+                break;
+            case 6:
+                printf("%s\n", current_character == '1' ? "true" : "false");
+                break;
+            case 7:
+                printf("%s\n", current_character == '2' ? "true" : "false");
+                break;
+            case 8:
+                printf("%s\n", current_character == '7' ? "true" : "false");
+                break;
+            case 9:
+                printf("%s\n", current_character == '.' ? "true" : "false");
+                break;
+            case 10:
+                printf("%s\n", current_character == '0' ? "true" : "false");
+                break;
+            case 11:
+                printf("%s\n", current_character == '.' ? "true" : "false");
+                break;
+            case 12:
+                printf("%s\n", current_character == '0' ? "true" : "false");
+                break;
+            case 13:
+                printf("%s\n", current_character == '.' ? "true" : "false");
+                break;
+            case 14:
+                printf("%s\n", current_character == '1' ? "true" : "false");
+                break;
+            case 15:
+                printf("%s\n", current_character == ':' ? "true" : "false");
+                break;
+            case 16:
+                printf("%s\n", current_character == '8' ? "true" : "false");
+                break;
+            case 17:
+                printf("%s\n", current_character == '0' ? "true" : "false");
+                break;
+            case 18:
+                printf("%s\n", current_character == '8' ? "true" : "false");
+                break;
+            case 19:
+                printf("%s\n", current_character == '0' ? "true" : "false");
+                break;
+        }
+        one_pointer++;
+    }
+}
+
 /*
 int main()
 {
